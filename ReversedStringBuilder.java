@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.lang.RuntimeException;
 
 public class ReversedStringBuilder 
@@ -87,6 +88,12 @@ public class ReversedStringBuilder
 
 	public ReversedStringBuilder append(Object obj) {
 		return append(String.valueOf(obj));
+	}
+
+	public void trimToSize() {
+		if (count < value.length) {
+			value = Arrays.copyOfRange(value, value.length-count, value.length);
+		}
 	}
 
 	private void boundsChecking(int start, int end, int len) {
