@@ -1,3 +1,4 @@
+package src.main;
 import java.util.Arrays;
 import java.lang.RuntimeException;
 
@@ -63,6 +64,14 @@ public class ReversedStringBuilder
 	public ReversedStringBuilder append(char c) {
 		ensureCountIncrease(1);
 		value[value.length - (++count)] = c;
+		return this;
+	}
+	
+	public ReversedStringBuilder append(char[] s) {
+		ensureCountIncrease(s.length);
+		for(int i=1; i<=s.length; i++){
+			value[value.length - (++count)] = s[s.length - i];
+		}
 		return this;
 	}
 
