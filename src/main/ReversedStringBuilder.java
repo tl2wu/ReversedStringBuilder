@@ -86,11 +86,10 @@ public class ReversedStringBuilder
 		if (s == null) {
 			s = "null";
 		}
-		int len = end - start;
-		boundsChecking(start, end, len);
-		ensureCountIncrease(len);
-		for(int i=1; i<=s.length(); i++){
-			value[value.length - (++count)] = s.charAt(s.length() - i);
+		boundsChecking(start, end, s.length());
+		ensureCountIncrease(end - start);
+		for(int i=end-1; i>=start; i--){
+			value[value.length - (++count)] = s.charAt(i);
 		}
 		return this;
 	}
