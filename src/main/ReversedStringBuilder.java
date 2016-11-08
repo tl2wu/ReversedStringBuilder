@@ -40,6 +40,10 @@ public class ReversedStringBuilder
 	}
 	*/
 
+	public int capacity() {
+		return value.length;
+	}
+	
 	public int length() {
 		return count;
 	}
@@ -61,6 +65,13 @@ public class ReversedStringBuilder
 		return new String(value, value.length-count, count);
 	}
 
+	public void setCharAt(int index, char ch) {
+		if((index < 0) || (index >= count)) {
+			throw new StringIndexOutOfBoundsException(index);
+		}
+		value[value.length - count + index] = ch;
+	}
+	
 	public ReversedStringBuilder append(char c) {
 		ensureCountIncrease(1);
 		value[value.length - (++count)] = c;
@@ -71,6 +82,15 @@ public class ReversedStringBuilder
 		ensureCountIncrease(s.length);
 		for(int i=1; i<=s.length; i++){
 			value[value.length - (++count)] = s[s.length - i];
+		}
+		return this;
+	}
+	
+	public ReversedStringBuilder append(char[] s, int start, int end) {
+		boundsChecking(start, end, s.length);
+		ensureCountIncrease(end - start);
+		for(int i=end-1; i>=start; i--){
+			value[value.length - (++count)] = s[i];
 		}
 		return this;
 	}
@@ -103,7 +123,34 @@ public class ReversedStringBuilder
 			value = Arrays.copyOfRange(value, value.length-count, value.length);
 		}
 	}
+	
+	public void setLength(int newLength) {
+		if(newLength < 0) {
+			throw new StringIndexOutOfBoundsException(newLength);
+		}
+		ensureCapacity(newLength);
+		
+		if(count < newLength) {
+			for(int i=0; i<count; i++) {
+				value[value.length - newLength + i] = value[value.length - count + i];
+			}
+			for( ; count<newLength; count++) {
+				value[value.length - newLength + count] = '\0';
+			}
+		} else {
+			for(int i=1; i<=newLength; i++) {
+				value[value.length-i] = value[value.length-count+newLength-i];
+			}
+			count = newLength;
+		}
+	}
 
+	public ReversedStringBuilder clone() {
+		ReversedStringBuilder clonedSb = new ReversedStringBuilder(this.length());
+		clonedSb.append(this.value, value.length-count, value.length);
+		return clonedSb;
+	}
+	
 	private void boundsChecking(int start, int end, int len) {
 		if ((start < 0) || (start > end) || (end > len)) {
 			throw new IndexOutOfBoundsException("start " + start + ", end" + end + ", len " + len);
