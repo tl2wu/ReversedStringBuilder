@@ -211,6 +211,23 @@ public class ReversedStringBuilder
 		return this;
 	}
 	
+	public ReversedStringBuilder deleteCharAt(int index) {
+		if ((index < 0) || (index > length())) {
+			throw new StringIndexOutOfBoundsException(index);
+		}
+		System.arraycopy(value, value.length-count, value, value.length-count+1, index);
+		count--;
+		return this;
+	}
+	
+	public ReversedStringBuilder delete(int start, int end) {
+		boundsChecking(start, end, count);
+		int deleteLength = end - start;
+		System.arraycopy(value, value.length-count, value, value.length-count+deleteLength, start);
+		count -= (deleteLength);
+		return this;
+	}
+	
 	public ReversedStringBuilder clone() {
 		ReversedStringBuilder clonedSb = new ReversedStringBuilder(this.length());
 		clonedSb.append(this.value, value.length-count, value.length);
