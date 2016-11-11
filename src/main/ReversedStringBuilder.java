@@ -220,6 +220,11 @@ public class ReversedStringBuilder
 		return this;
 	}
 	
+	public void getChars(int srcBegin, int srcEnd, char dst[], int dstBegin) {
+		boundsChecking(srcBegin, srcEnd, count);
+		System.arraycopy(value, srcBegin, dst, dstBegin, srcEnd - srcBegin);
+	}
+	
 	public ReversedStringBuilder delete(int start, int end) {
 		boundsChecking(start, end, count);
 		int deleteLength = end - start;
