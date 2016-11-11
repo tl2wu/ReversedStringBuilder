@@ -80,18 +80,18 @@ public class ReversedStringBuilder
 	
 	public ReversedStringBuilder append(char[] s) {
 		ensureCountIncrease(s.length);
-		for(int i=1; i<=s.length; i++){
-			value[value.length - (++count)] = s[s.length - i];
-		}
+		count += s.length;
+		System.arraycopy(s, 0, value, value.length-count, s.length);
 		return this;
 	}
 	
 	public ReversedStringBuilder append(char[] s, int start, int end) {
 		boundsChecking(start, end, s.length);
-		ensureCountIncrease(end - start);
-		for(int i=end-1; i>=start; i--){
-			value[value.length - (++count)] = s[i];
-		}
+		int appendLength = end - start;
+		ensureCountIncrease(appendLength);
+		
+		count += appendLength;
+		System.arraycopy(s, start, value, value.length-count, appendLength);
 		return this;
 	}
 
@@ -106,6 +106,7 @@ public class ReversedStringBuilder
 		if (s == null) {
 			s = "null";
 		}
+		
 		boundsChecking(start, end, s.length());
 		ensureCountIncrease(end - start);
 		for(int i=end-1; i>=start; i--){
@@ -129,20 +130,13 @@ public class ReversedStringBuilder
 			throw new StringIndexOutOfBoundsException(newLength);
 		}
 		ensureCapacity(newLength);
-		
 		if(count < newLength) {
-			for(int i=0; i<count; i++) {
-				value[value.length - newLength + i] = value[value.length - count + i];
-			}
-			for( ; count<newLength; count++) {
-				value[value.length - newLength + count] = '\0';
-			}
+			System.arraycopy(value, value.length-count, value, value.length-newLength, count);
+			Arrays.fill(value, value.length-newLength+count, value.length, '\0');
 		} else {
-			for(int i=1; i<=newLength; i++) {
-				value[value.length-i] = value[value.length-count+newLength-i];
-			}
-			count = newLength;
+			System.arraycopy(value, value.length-count, value, value.length-newLength, newLength);
 		}
+		count = newLength;
 	}
 
 	public ReversedStringBuilder insert(int offset, char c) {
@@ -151,7 +145,7 @@ public class ReversedStringBuilder
 		}
 		
 		ensureCountIncrease(1);
-		arraycopyForward(value, value.length-count, value, value.length-count-1, offset+1);
+		System.arraycopy(value, value.length-count, value, value.length-count-1, offset+1);
 		value[offset] = c;
 		count++;
 		return this;
@@ -163,9 +157,9 @@ public class ReversedStringBuilder
 		}
 		
 		ensureCountIncrease(s.length);
-		arraycopyForward(value, value.length-count, value, value.length-count-s.length, offset+1);
+		System.arraycopy(value, value.length-count, value, value.length-count-s.length, offset+1);
 		count += s.length;
-		arraycopyForward(s, 0, value, value.length+offset, s.length);
+		System.arraycopy(s, 0, value, value.length+offset, s.length);
 		return this;
 	}
 	
@@ -175,9 +169,9 @@ public class ReversedStringBuilder
 		}
 		
 		ensureCountIncrease(s.length);
-		arraycopyForward(value, value.length-count, value, value.length-count-s.length, offset+1);
+		System.arraycopy(value, value.length-count, value, value.length-count-s.length, offset+1);
 		count += s.length;
-		arraycopyForward(s, 0, value, value.length+offset, s.length);
+		System.arraycopy(s, 0, value, value.length+offset, s.length);
 		return this;
 	}
 	
@@ -190,7 +184,7 @@ public class ReversedStringBuilder
 		}
 		
 		ensureCountIncrease(s.length());
-		arraycopyForward(value, value.length-count, value, value.length-count-s.length(), dstOffset+1);
+		System.arraycopy(value, value.length-count, value, value.length-count-s.length(), dstOffset+1);
 		for(int i=0; i<s.length(); i++) {
 			value[dstOffset++] = s.charAt(i);
 		}
@@ -207,13 +201,13 @@ public class ReversedStringBuilder
 		}
 		boundsChecking(start, end, s.length());
 		
-		int insertedlength = end - start;
-		ensureCountIncrease(insertedlength);
-		arraycopyForward(value, value.length-count, value, value.length-count-insertedlength, insertedlength);
+		int insertlength = end - start;
+		ensureCountIncrease(insertlength);
+		System.arraycopy(value, value.length-count, value, value.length-count-insertlength, insertlength);
 		for(int i=start ; i<end; i++) {
 			value[dstOffset++] = s.charAt(i);
 		}
-		count += insertedlength;
+		count += insertlength;
 		return this;
 	}
 	
@@ -223,17 +217,19 @@ public class ReversedStringBuilder
 		return clonedSb;
 	}
 	
+	/*
 	private void arraycopyForward(char[] src, int srcPos, char[] dest, int destPos, int length) {
 		for(int i=0; i<length; i++){
 			 dest[destPos+i] = src[srcPos+i];
 		}
 	}
 	
-	private void arraycopyBackword(char[] src, int srcPos, char[] dest, int destPos, int length) {
+	private void arraycopyBackward(char[] src, int srcPos, char[] dest, int destPos, int length) {
 		for(int i=length-1; i>=0; i--){
 			dest[destPos+i] = src[srcPos+i];
 		}
 	}
+	*/
 	
 	private void boundsChecking(int start, int end, int len) {
 		if ((start < 0) || (start > end) || (end > len)) {

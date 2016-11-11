@@ -196,7 +196,7 @@ public class ReversedStringBuilderTest {
 	@Test
 	public void setLengthTest() {
 		// test success setLength() cases
-		for(int newLength=0; newLength<=enAlphabet.length(); newLength++) {
+		for(int newLength=0; newLength<=enAlphabet.length()*5; newLength++) {
 			ReversedStringBuilder rsb = getEnAlphabetReversedStringBuilder();
 			StringBuilder sb = new StringBuilder(enAlphabet);
 			rsb.setLength(newLength);
